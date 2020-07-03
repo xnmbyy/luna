@@ -102,8 +102,12 @@ export class ElementSshTermComponent implements OnInit, OnDestroy {
     this.emitHostAndTokenData();
 
     this.term.on('data', data => {
-      const d = {'data': data, 'room': this.roomID};
-      this.ws.emit('data', d);
+      this.term.on('data', data => {
+        if (data.charCodeAt(0) == 127) {
+          data = String.fromCharCode(8);
+        }
+        const d = {'data': data, 'room': this.roomID};
+        this.ws.emit('data', d);
     });
 
     this.ws.on('shareRoomData', data => {
